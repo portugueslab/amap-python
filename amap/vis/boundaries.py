@@ -4,7 +4,7 @@ from skimage.segmentation import find_boundaries
 from imlib.image.scale import scale_and_convert_to_16_bits
 from imlib.image import nii
 
-from amap.tools.source_files import source_custom_config
+from amap.tools.source_files import source_custom_config_amap
 
 
 def main(registered_atlas, boundaries_out_path, atlas_config=None):
@@ -32,7 +32,7 @@ class GetAtlas:
 
     def get_atlas_config(self):
         if self._atlas_config is None:
-            self._atlas_config = source_custom_config()
+            self._atlas_config = source_custom_config_amap()
 
     def get_atlas(self):
         atlas = brainio.load_nii(self._atlas_path, as_array=False)

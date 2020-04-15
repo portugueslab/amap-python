@@ -5,8 +5,7 @@ import urllib.request
 
 from imlib.general.system import disk_free_gb
 from imlib.general.config import get_config_obj
-from amap.tools import source_files
-
+from imlib.source import source_files
 
 class DownloadError(Exception):
     pass
@@ -83,8 +82,8 @@ def amend_cfg(new_atlas_folder=None, atlas=None):
     """
     print("Ensuring custom config file is correct")
 
-    original_config = source_files.source_config()
-    new_config = source_files.source_custom_config()
+    original_config = source_files.source_config_amap()
+    new_config = source_files.source_custom_config_amap()
     if new_atlas_folder is not None:
         write_atlas_to_cfg(
             new_atlas_folder, atlas, original_config, new_config
