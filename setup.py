@@ -23,6 +23,7 @@ requirements = [
     "napari>=0.2.8",
     "scikit-image",
     "luddite",
+    "neuro>=0.0.7",
 ]
 
 
@@ -55,7 +56,6 @@ setup(
             "amap = amap.cli:main",
             "amap_gui = amap.cli:gui",
             "amap_download = amap.download.cli:main",
-            "amap_vis = amap.vis.vis:main",
         ]
     },
     project_urls={

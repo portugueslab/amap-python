@@ -4,7 +4,7 @@ from skimage.segmentation import find_boundaries
 from imlib.image.scale import scale_and_convert_to_16_bits
 from imlib.image import nii
 
-from amap.tools.source_files import source_custom_config_amap
+from imlib.source.source_files import source_custom_config_amap
 
 
 def main(registered_atlas, boundaries_out_path, atlas_config=None):

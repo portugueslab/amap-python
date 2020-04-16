@@ -4,6 +4,7 @@ import numpy as np
 from pathlib import Path
 from imlib.general.system import get_num_processes, delete_temp
 
+from neuro.atlas_tools.paths import Paths
 from amap.register.brain_processor import BrainProcessor
 from amap.register.brain_registration import BrainRegistration
 from amap.register.volume import calculate_volumes
@@ -11,7 +12,6 @@ from amap.config.atlas import Atlas
 from amap.vis.boundaries import main as calc_boundaries
 from amap.register.registration_params import RegistrationParams
 from amap.register.tools import save_downsampled_image
-from amap.utils.paths import Paths
 from amap.utils.run import Run
 
 flips = {
@@ -36,6 +36,7 @@ def main(
     flip_x=False,
     flip_y=False,
     flip_z=False,
+    rotation="x0y0z0",
     affine_n_steps=6,
     affine_use_n_steps=5,
     freeform_n_steps=6,
@@ -109,6 +110,12 @@ def main(
 
         # flips if the input data doesnt match the nifti standard
         brain.flip_atlas((flip_x, flip_y, flip_z))
+
+        ####################
+        # axes = (0, 1)
+        # k = 3
+        # brain.rotate_atlas(axes, k)
+        ####################
 
         brain.atlas.save_all()
         if save_downsampled:

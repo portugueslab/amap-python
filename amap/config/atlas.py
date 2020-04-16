@@ -146,6 +146,20 @@ class Atlas(object):
     def reorientate_to_sample(self, sample_orientation):
         self._transpose_all(transpositions[sample_orientation])
 
+    def rotate(self, axes, k):
+        self._rotate_all(axes, k)
+
+    def _rotate_all(self, axes, k):
+        self._data = self._rotate(self._data, axes, k)
+        self._brain_data = self._rotate(self._brain_data, axes, k)
+        self._hemispheres_data = self._rotate(self._hemispheres_data, axes, k)
+
+    def _rotate(self, nii_img, axes, k):
+        # FIXME: should be just changing the header
+        data = np.rot90(nii_img.get_data(), axes=axes, k=k)
+        # data = np.swapaxes(data, 0, 1)
+        return nb.Nifti1Image(data, nii_img.affine, nii_img.header)
+
     def get_dest_path(self, atlas_element_name):
         if not self.dest_folder:
             raise AtlasError(

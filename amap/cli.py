@@ -167,6 +167,16 @@ def geometry_parser(parser):
         "then the atlas will be flipped to match the input data",
     )
 
+    geometry_opt_parser.add_argument(
+        "--rotation",
+        dest="rotation",
+        default="x0y0z0",
+        help="How to rotate the atlas to match the raw data. In the format "
+        "'xIyJzK', where x, y & z are the axes to rotate around, and "
+        "I, J & K are the number of 90 degree rotations for the "
+        "respective axes.",
+    )
+
     return parser
 
 
@@ -364,6 +374,7 @@ def run():
         flip_x=args.flip_x,
         flip_y=args.flip_y,
         flip_z=args.flip_z,
+        rotation=args.rotation,
         affine_n_steps=args.affine_n_steps,
         affine_use_n_steps=args.affine_use_n_steps,
         freeform_n_steps=args.freeform_n_steps,

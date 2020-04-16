@@ -113,6 +113,17 @@ class BrainProcessor(object):
     def swap_atlas_orientation_to_self(self):
         self.atlas.reorientate_to_sample(self.original_orientation)
 
+    def rotate_atlas(self, axes, k):
+        """
+        If the supplied data is not in a conventional rotation (i.e.
+        for a coronal dataset, the dorsal side facing up), rotate
+        the atlas to match
+        :param axes:
+        :param k:
+        :return:
+        """
+        self.atlas.rotate(axes, k)
+
     def filter(self):
         """
         Applies a set of filters to the brain to avoid overfitting details in
