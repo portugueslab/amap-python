@@ -29,7 +29,7 @@ requirements = [
 
 setup(
     name="amap",
-    version="0.1.16",
+    version="0.1.17",
     description="Automated mouse atlas propagation",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -48,7 +48,7 @@ setup(
             "coverage<=4.5.4",
         ]
     },
-    python_requires=">=3.6",
+    python_requires=">=3.6, <3.8",
     packages=find_namespace_packages(exclude=("docs", "tests*")),
     include_package_data=True,
     entry_points={
