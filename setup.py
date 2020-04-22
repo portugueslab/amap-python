@@ -45,7 +45,7 @@ setup(
             "pytest",
             "gitpython",
             "coveralls",
-            "coverage<=4.5.4",
+            "coverage<5.2.0",
         ]
     },
     python_requires=">=3.6, <3.8",
