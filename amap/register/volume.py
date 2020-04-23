@@ -13,6 +13,8 @@ from brainio import brainio
 from imlib.pandas.misc import initialise_df
 from imlib.general.config import get_config_obj
 
+from neuro.atlas_tools.array import lateralise_atlas
+
 
 def load_structures_as_df(structures_file_path):
     return pd.read_csv(structures_file_path, sep=",", header=0, quotechar='"')
@@ -28,14 +30,6 @@ def get_voxel_volume(registration_config):
 
     voxel_volume = x_pixel_size * y_pixel_size * z_pixel_size
     return voxel_volume
-
-
-def lateralise_atlas(
-    atlas, hemispheres, left_hemisphere_value=2, right_hemisphere_value=1
-):
-    atlas_left = atlas[hemispheres == left_hemisphere_value]
-    atlas_right = atlas[hemispheres == right_hemisphere_value]
-    return atlas_left, atlas_right
 
 
 def get_lateralised_atlas(
