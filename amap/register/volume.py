@@ -6,30 +6,14 @@ Module to calculate volume of brain regions
 """
 
 import numpy as np
-import pandas as pd
 import logging
 
 from brainio import brainio
 from imlib.pandas.misc import initialise_df
-from imlib.general.config import get_config_obj
 
 from neuro.atlas_tools.array import lateralise_atlas
-
-
-def load_structures_as_df(structures_file_path):
-    return pd.read_csv(structures_file_path, sep=",", header=0, quotechar='"')
-
-
-def get_voxel_volume(registration_config):
-    config_obj = get_config_obj(registration_config)
-    atlas_conf = config_obj["atlas"]
-    atlas_pixel_sizes = atlas_conf["pixel_size"]
-    x_pixel_size = float(atlas_pixel_sizes["x"])
-    y_pixel_size = float(atlas_pixel_sizes["y"])
-    z_pixel_size = float(atlas_pixel_sizes["z"])
-
-    voxel_volume = x_pixel_size * y_pixel_size * z_pixel_size
-    return voxel_volume
+from neuro.structures.IO import load_structures_as_df
+from neuro.atlas_tools.misc import get_voxel_volume
 
 
 def get_lateralised_atlas(
