@@ -14,6 +14,10 @@ from imlib.pandas.misc import initialise_df
 from neuro.atlas_tools.array import lateralise_atlas
 from neuro.structures.IO import load_structures_as_df
 from neuro.atlas_tools.misc import get_voxel_volume
+from neuro.structures.structures_tree import (
+    atlas_value_to_name,
+    UnknownAtlasValue,
+)
 
 
 def get_lateralised_atlas(
@@ -37,20 +41,6 @@ def get_lateralised_atlas(
         atlas_right, return_counts=True
     )
     return unique_vals_left, unique_vals_right, counts_left, counts_right
-
-
-class UnknownAtlasValue(Exception):
-    pass
-
-
-def atlas_value_to_name(atlas_value, structures_reference_df):
-    line = structures_reference_df[
-        structures_reference_df["id"] == atlas_value
-    ]
-    if len(line) == 0:
-        raise UnknownAtlasValue(atlas_value)
-    name = line["name"]
-    return str(name.values[0])
 
 
 def add_structure_volume_to_df(
