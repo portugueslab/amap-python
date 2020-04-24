@@ -23,13 +23,13 @@ requirements = [
     "napari>=0.2.8",
     "scikit-image",
     "luddite",
-    "neuro>=0.0.10",
+    "neuro>=0.0.9",
 ]
 
 
 setup(
     name="amap",
-    version="0.1.18",
+    version="0.1.17",
     description="Automated mouse atlas propagation",
     long_description=long_description,
     long_description_content_type="text/markdown",
