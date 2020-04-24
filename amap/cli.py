@@ -306,13 +306,14 @@ def copy_registration_config(registration_config, output_directory):
 
 
 def prep_registration(args):
+    """ If an atlas is not available, download it.
+    """
     logging.info("Checking whether the atlas exists")
     _, atlas_files_exist = check_atlas_install()
+
     if not atlas_files_exist:
         logging.warning("Atlas does not exist, downloading.")
-        if args.download_path is None:
-            args.download_path = os.path.join(temp_dir_path, "atlas.tar.gz")
-        atlas_download.main(args.atlas, args.install_path, args.download_path)
+        atlas_download(args.atlas, args.install_path, args.download_path)
         amend_cfg(
             new_atlas_folder=args.install_path, atlas=args.atlas,
         )
