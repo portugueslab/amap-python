@@ -1,4 +1,3 @@
-import os
 import shutil
 import tarfile
 import urllib.request
@@ -12,10 +11,10 @@ class DownloadError(Exception):
     pass
 
 
-def download_file(destination_path, file_url, filename):
+def download_file(destination_path, file_url):
     direct_download = True
     file_url = file_url.format(int(direct_download))
-    print(f"Downloading file: {filename}")
+    print("Downloading...")
     with urllib.request.urlopen(file_url) as response:
         with open(destination_path, "wb") as outfile:
             shutil.copyfileobj(response, outfile)
@@ -29,51 +28,43 @@ def extract_file(tar_file_path, destination_path):
 
 # TODO: check that intermediate folders exist
 def download(
-    download_path,
+    download_dir_path,
     url,
-    file_name,
     install_path=None,
     download_requires=None,
     extract_requires=None,
 ):
-    if not os.path.exists(os.path.dirname(download_path)):
-        raise DownloadError(
-            f"Could not find directory '{os.path.dirname(download_path)}' "
-            f"to download file: {file_name}"
-        )
+    COMPRESSED_FILENAME = "atlas.tar.gz"
+
+    if not download_dir_path.exists():
+        raise DownloadError(f"Could not find directory '{download_dir_path}' ")
 
     if (download_requires is not None) and (
-        disk_free_gb(os.path.dirname(download_path)) < download_requires
+        disk_free_gb(download_dir_path) < download_requires
     ):
         raise DownloadError(
-            f"Insufficient disk space in {os.path.dirname(download_path)} to"
-            f"download file: {file_name}"
+            f"Insufficient disk space in {download_dir_path} to"
         )
 
     if install_path is not None:
-        if not os.path.exists(install_path):
-            raise DownloadError(
-                f"Could not find directory '{install_path}' "
-                f"to extract file: {file_name}"
-            )
+        if not install_path.exists():
+            raise DownloadError(f"Could not find directory '{install_path}' ")
 
         if (extract_requires is not None) and (
             disk_free_gb(install_path) < extract_requires
         ):
+            raise DownloadError(f"Insufficient disk space in {install_path}")
             raise DownloadError(
-                f"Insufficient disk space in {install_path} to"
-                f"extract file: {file_name}"
-            )
-            raise DownloadError(
-                "Insufficient disk space in {} to install atlas".format(
-                    install_path
-                )
+                f"Insufficient disk space in {install_path} to install atlas"
             )
 
-    download_file(download_path, url, file_name)
+    # Create full filename...
+    download_filename = download_dir_path / COMPRESSED_FILENAME
+    # ..download...
+    download_file(download_filename, url)
     if install_path is not None:
-        extract_file(download_path, install_path)
-        os.remove(download_path)
+        extract_file(download_filename, install_path)
+        download_filename.unlink()
 
 
 def amend_cfg(new_atlas_folder=None, atlas=None):
@@ -92,6 +83,13 @@ def amend_cfg(new_atlas_folder=None, atlas=None):
 
 
 def write_atlas_to_cfg(atlas_folder, atlas, orig_config, custom_config):
+    """ Write configuration of an atlas over a preexisting config file
+    :param atlas_folder:
+    :param atlas:
+    :param orig_config:
+    :param custom_config:
+    :return:
+    """
     config_obj = get_config_obj(orig_config)
     atlas_conf = config_obj["atlas"]
     orig_base_directory = atlas_conf["base_folder"]
@@ -101,7 +99,7 @@ def write_atlas_to_cfg(atlas_folder, atlas, orig_config, custom_config):
     for i, line in enumerate(data):
         data[i] = line.replace(
             f"base_folder = '{orig_base_directory}",
-            f"base_folder = '{os.path.join(atlas_folder, atlas)}",
+            f"base_folder = '{atlas_folder / atlas}",
         )
     with open(custom_config, "w") as out_conf:
         out_conf.writelines(data)

@@ -16,7 +16,7 @@ from imlib.source import source_files
 
 from amap.download.cli import atlas_parser, download_directory_parser
 from amap.main import main as register
-from amap.download import atlas as atlas_download
+from amap.download.cli import atlas_download
 from amap.download.download import amend_cfg
 import amap as program_for_log
 
