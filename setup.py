@@ -16,20 +16,20 @@ requirements = [
     "multiprocessing-logging",
     "configobj",
     "slurmio",
-    "brainio>=0.0.10",
+    "brainio>=0.0.13",
     "fancylog",
     "micrometa",
-    "imlib",
+    "imlib >= 0.0.21",
     "napari>=0.2.8",
     "scikit-image",
     "luddite",
-    "neuro>=0.0.7",
+    "neuro>=0.0.9",
 ]
 
 
 setup(
     name="amap",
-    version="0.1.17",
+    version="0.1.19",
     description="Automated mouse atlas propagation",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -6,36 +6,18 @@ Module to calculate volume of brain regions
 """
 
 import numpy as np
-import pandas as pd
 import logging
 
 from brainio import brainio
 from imlib.pandas.misc import initialise_df
-from imlib.general.config import get_config_obj
 
-
-def load_structures_as_df(structures_file_path):
-    return pd.read_csv(structures_file_path, sep=",", header=0, quotechar='"')
-
-
-def get_voxel_volume(registration_config):
-    config_obj = get_config_obj(registration_config)
-    atlas_conf = config_obj["atlas"]
-    atlas_pixel_sizes = atlas_conf["pixel_size"]
-    x_pixel_size = float(atlas_pixel_sizes["x"])
-    y_pixel_size = float(atlas_pixel_sizes["y"])
-    z_pixel_size = float(atlas_pixel_sizes["z"])
-
-    voxel_volume = x_pixel_size * y_pixel_size * z_pixel_size
-    return voxel_volume
-
-
-def lateralise_atlas(
-    atlas, hemispheres, left_hemisphere_value=2, right_hemisphere_value=1
-):
-    atlas_left = atlas[hemispheres == left_hemisphere_value]
-    atlas_right = atlas[hemispheres == right_hemisphere_value]
-    return atlas_left, atlas_right
+from neuro.atlas_tools.array import lateralise_atlas
+from neuro.structures.IO import load_structures_as_df
+from neuro.atlas_tools.misc import get_voxel_volume
+from neuro.structures.structures_tree import (
+    atlas_value_to_name,
+    UnknownAtlasValue,
+)
 
 
 def get_lateralised_atlas(
@@ -59,20 +41,6 @@ def get_lateralised_atlas(
         atlas_right, return_counts=True
     )
     return unique_vals_left, unique_vals_right, counts_left, counts_right
-
-
-class UnknownAtlasValue(Exception):
-    pass
-
-
-def atlas_value_to_name(atlas_value, structures_reference_df):
-    line = structures_reference_df[
-        structures_reference_df["id"] == atlas_value
-    ]
-    if len(line) == 0:
-        raise UnknownAtlasValue(atlas_value)
-    name = line["name"]
-    return str(name.values[0])
 
 
 def add_structure_volume_to_df(
