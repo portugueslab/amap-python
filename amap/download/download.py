@@ -46,22 +46,25 @@ def download(
             f"Insufficient disk space in {download_dir_path} to"
         )
 
-    if not install_path.exists():
-        raise DownloadError(f"Could not find directory '{install_path}' ")
+    if install_path is not None:
+        if not install_path.exists():
+            raise DownloadError(f"Could not find directory '{install_path}' ")
 
-    if (extract_requires is not None) and (
-        disk_free_gb(install_path) < extract_requires
-    ):
-        raise DownloadError(f"Insufficient disk space in {install_path}")
-        raise DownloadError(
-            f"Insufficient disk space in {install_path} to install atlas"
-        )
+        if (extract_requires is not None) and (
+            disk_free_gb(install_path) < extract_requires
+        ):
+            raise DownloadError(f"Insufficient disk space in {install_path}")
+            raise DownloadError(
+                f"Insufficient disk space in {install_path} to install atlas"
+            )
 
     # Create full filename...
     download_filename = download_dir_path / COMPRESSED_FILENAME
-    download_file(download_filename, url)  # ..download...
-    extract_file(download_filename, install_path)  # extract to...
-    download_filename.unlink()  #...and remove filename
+    # ..download...
+    download_file(download_filename, url)
+    if install_path is not None:
+        extract_file(download_filename, install_path)
+        download_filename.unlink()
 
 
 def amend_cfg(new_atlas_folder=None, atlas=None):

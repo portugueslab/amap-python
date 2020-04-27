@@ -6,8 +6,11 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from amap.download.download import amend_cfg, download
 
 
-DEFAULT_DOWNLOAD_DIRECTORY = Path.home() / ".amap" / "atlas"
+home = Path.home()
+DEFAULT_DOWNLOAD_DIRECTORY = home / ".amap" / "atlas"
 temp_dir = tempfile.TemporaryDirectory()
+temp_dir_path = Path(temp_dir.name)
+
 
 # allen_2017 (default) and allen_2017_10um are the same
 atlas_urls = {
@@ -58,7 +61,7 @@ def download_directory_parser(parser):
         "--download-path",
         dest="download_path",
         type=Path,
-        default=Path(temp_dir.name) ,
+        default=temp_dir_path,
         help="The path to download files into.",
     )
     parser.add_argument(

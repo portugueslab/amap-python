@@ -21,6 +21,9 @@ from amap.download.download import amend_cfg
 import amap as program_for_log
 
 
+temp_dir = tempfile.TemporaryDirectory()
+temp_dir_path = temp_dir.name
+
 
 def register_cli_parser():
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
@@ -199,7 +202,6 @@ def registration_parse(parser):
         dest="registration_config",
         type=str,
         help="To supply your own, custom registration configuration file.",
-        default=source_files.source_custom_config_amap(),
     )
     registration_opt_parser.add_argument(
         "--sort-input-file",
@@ -278,18 +280,14 @@ def registration_parse(parser):
     return parser
 
 
-def check_atlas_install(atlas_path=None):
+def check_atlas_install():
     """
     Checks whether the atlas directory exists, and whether it's empty or not.
     :return: Whether the directory exists, and whether the files also exist
     """
     dir_exists = False
     files_exist = False
-    if atlas_path is None:
-        cfg_file_path = source_files.source_custom_config_amap()
-    else:
-        cfg_file_path = str(atlas_path / "config.conf")
-
+    cfg_file_path = source_files.source_custom_config_amap()
     if os.path.exists(cfg_file_path):
         config_obj = get_config_obj(cfg_file_path)
         atlas_conf = config_obj["atlas"]
@@ -311,7 +309,7 @@ def prep_registration(args):
     """ If an atlas is not available, download it.
     """
     logging.info("Checking whether the atlas exists")
-    _, atlas_files_exist = check_atlas_install(Path(args.registration_config).parent)
+    _, atlas_files_exist = check_atlas_install()
 
     if not atlas_files_exist:
         logging.warning("Atlas does not exist, downloading.")
@@ -319,6 +317,8 @@ def prep_registration(args):
         amend_cfg(
             new_atlas_folder=args.install_path, atlas=args.atlas,
         )
+    if args.registration_config is None:
+        args.registration_config = source_files.source_custom_config_amap()
 
     logging.debug("Making registration directory")
     ensure_directory_exists(args.registration_output_folder)
@@ -350,6 +350,7 @@ def run():
     start_time = datetime.now()
     args = register_cli_parser().parse_args()
     args = define_pixel_sizes(args)
+
     args, additional_images_downsample = prep_registration(args)
     args = make_paths_absolute(args)
 
