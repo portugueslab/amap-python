@@ -32,8 +32,7 @@ extract_requirements_gb = {
 def atlas_download(atlas, atlas_dir, download_path):
     # Check if all the 4 .nii files are in the directory, else download again:
     if len(list((atlas_dir / atlas).glob("*.nii"))) < 4:
-        atlas_dir.mkdir(exist_ok=True)
-
+        atlas_dir.mkdir(exist_ok=True, parents=True)
         download(
             download_path,
             atlas_urls[atlas],
