@@ -17,13 +17,10 @@ volumes_validate_path = os.path.join(volume_data_path, "volumes.csv")
 
 def test_volume_calc(tmpdir, test_config_path):
     tmpdir = str(tmpdir)
-    print("testdir", tmpdir)
-    config = os.path.join(os.getcwd(), "tests", "data", "config", "test.conf")
-    print(get_config_obj(test_config_path))
     atlas = Atlas(test_config_path)
 
     structures_file_path = atlas.get_structures_path()
-    registration_config = source_custom_config_amap()
+    registration_config = test_config_path
 
     volumes_csv_path = os.path.join(tmpdir, "volumes.csv")
     calculate_volumes(
