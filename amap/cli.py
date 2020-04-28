@@ -201,6 +201,7 @@ def registration_parse(parser):
         "--registration-config",
         dest="registration_config",
         type=str,
+        default=source_files.source_custom_config_amap(),
         help="To supply your own, custom registration configuration file.",
     )
     registration_opt_parser.add_argument(
@@ -280,14 +281,17 @@ def registration_parse(parser):
     return parser
 
 
-def check_atlas_install():
+def check_atlas_install(cfg_file_path=None):
     """
     Checks whether the atlas directory exists, and whether it's empty or not.
     :return: Whether the directory exists, and whether the files also exist
     """
     dir_exists = False
     files_exist = False
-    cfg_file_path = source_files.source_custom_config_amap()
+    if cfg_file_path is None:
+        cfg_file_path = source_files.source_custom_config_amap()
+    else:
+        pass
     if os.path.exists(cfg_file_path):
         config_obj = get_config_obj(cfg_file_path)
         atlas_conf = config_obj["atlas"]
@@ -309,7 +313,7 @@ def prep_registration(args):
     """ If an atlas is not available, download it.
     """
     logging.info("Checking whether the atlas exists")
-    _, atlas_files_exist = check_atlas_install()
+    _, atlas_files_exist = check_atlas_install(args.registration_config)
 
     if not atlas_files_exist:
         logging.warning("Atlas does not exist, downloading.")
@@ -317,8 +321,6 @@ def prep_registration(args):
         amend_cfg(
             new_atlas_folder=args.install_path, atlas=args.atlas,
         )
-    if args.registration_config is None:
-        args.registration_config = source_files.source_custom_config_amap()
 
     logging.debug("Making registration directory")
     ensure_directory_exists(args.registration_output_folder)
