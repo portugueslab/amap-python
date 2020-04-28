@@ -22,9 +22,6 @@ y_pix = "40"
 z_pix = "50"
 
 
-
-
-#@pytest.mark.slow
 def test_register(tmpdir, test_config_path):
 
     output_directory = os.path.join(str(tmpdir), "output")
