@@ -72,6 +72,8 @@ def test_register(tmpdir, test_config_path):
         os.path.join(test_output_dir, "invert_affine_matrix.txt")
     )
 
+    print(pd.read_csv(os.path.join(output_directory, "volumes.csv")))
+    print(pd.read_csv(os.path.join(test_output_dir, "volumes.csv")))
     assert (
         (
             pd.read_csv(os.path.join(output_directory, "volumes.csv"))
