@@ -5,6 +5,7 @@ from imlib.image.scale import scale_and_convert_to_16_bits
 from imlib.image import nii
 
 from imlib.source.source_files import source_custom_config_amap
+import numpy as np
 
 
 def main(registered_atlas, boundaries_out_path, atlas_config=None):
@@ -18,6 +19,7 @@ def main(registered_atlas, boundaries_out_path, atlas_config=None):
 
 
 class GetAtlas:
+    # TODO this class is a bit arcane
     def __init__(self, registered_atlas, atlas_config=None):
 
         self._atlas_path = registered_atlas
@@ -35,9 +37,9 @@ class GetAtlas:
             self._atlas_config = source_custom_config_amap()
 
     def get_atlas(self):
-        atlas = brainio.load_nii(self._atlas_path, as_array=False)
-        self.atlas_scale = atlas.header.get_zooms()
-        self.atlas = atlas.get_data()
+        atlas_img = brainio.load_nii(self._atlas_path, as_array=False)
+        self.atlas_scale = atlas_img.header.get_zooms()
+        self.atlas = np.asanyarray(atlas_img.dataobj)
         self.get_transformation_matrix()
 
     def get_transformation_matrix(self):

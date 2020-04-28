@@ -6,7 +6,7 @@ The module to handle all the registration options and program binaries
 """
 
 
-from amap.config.atlas import Atlas
+from amap.config.atlas import RegistrationAtlas
 from imlib.general.config import get_config_obj
 from imlib.source.niftyreg_binaries import get_niftyreg_binaries, get_binary
 
@@ -69,12 +69,12 @@ class RegistrationParams:
         self.segmentation_interpolation_order = ("-inter", 0)
 
         # The atlas has been saved to the output folder
-        atlas = Atlas(config_path)
+        atlas = RegistrationAtlas(config_path)
         # self.atlas_path = atlas.get_path()
         # self.atlas_brain_path = atlas.get_brain_path()
         # self.hemispheres_path = atlas.get_hemispheres_path()
 
-        pixel_sizes = atlas.get_pixel_sizes_from_config()
+        pixel_sizes = atlas["pixel_size"]
         self.atlas_x_pix_size = pixel_sizes["x"]
         self.atlas_y_pix_size = pixel_sizes["y"]
         self.atlas_z_pix_size = pixel_sizes["z"]
