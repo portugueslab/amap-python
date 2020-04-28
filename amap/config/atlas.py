@@ -41,12 +41,18 @@ class RegistrationAtlas(Atlas):
         for element in ["atlas", "brain", "hemispheres"]:
             attr_name = f"_{element}_data"
             if getattr(self, attr_name) is None:
-                setattr(self, attr_name, self.get_nii_from_element(f"{element}_name"))
+                setattr(
+                    self,
+                    attr_name,
+                    self.get_nii_from_element(f"{element}_name"),
+                )
 
     def save_all(self):
         for element in ["atlas", "brain", "hemispheres"]:
-            brainio.to_nii(getattr(self, f"_{element}_data"),
-                           self.get_dest_path(f"{element}_name"))
+            brainio.to_nii(
+                getattr(self, f"_{element}_data"),
+                self.get_dest_path(f"{element}_name"),
+            )
 
     # FIXME: should be just changing the header
     def _flip(self, nii_img, axis_idx):
@@ -110,4 +116,3 @@ class RegistrationAtlas(Atlas):
         for i, axis in enumerate(("x", "y", "z")):
             transformation_matrix[i, i] = scale[axis] / 1000
         return transformation_matrix
-
