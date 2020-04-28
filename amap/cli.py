@@ -16,7 +16,7 @@ from imlib.source import source_files
 
 from amap.download.cli import atlas_parser, download_directory_parser
 from amap.main import main as register
-from amap.download import atlas as atlas_download
+from amap.download.cli import atlas_download
 from amap.download.download import amend_cfg
 import amap as program_for_log
 
@@ -201,6 +201,7 @@ def registration_parse(parser):
         "--registration-config",
         dest="registration_config",
         type=str,
+        default=source_files.source_custom_config_amap(),
         help="To supply your own, custom registration configuration file.",
     )
     registration_opt_parser.add_argument(
@@ -280,14 +281,17 @@ def registration_parse(parser):
     return parser
 
 
-def check_atlas_install():
+def check_atlas_install(cfg_file_path=None):
     """
     Checks whether the atlas directory exists, and whether it's empty or not.
     :return: Whether the directory exists, and whether the files also exist
     """
     dir_exists = False
     files_exist = False
-    cfg_file_path = source_files.source_custom_config_amap()
+    if cfg_file_path is None:
+        cfg_file_path = source_files.source_custom_config_amap()
+    else:
+        pass
     if os.path.exists(cfg_file_path):
         config_obj = get_config_obj(cfg_file_path)
         atlas_conf = config_obj["atlas"]
@@ -306,18 +310,17 @@ def copy_registration_config(registration_config, output_directory):
 
 
 def prep_registration(args):
+    """ If an atlas is not available, download it.
+    """
     logging.info("Checking whether the atlas exists")
-    _, atlas_files_exist = check_atlas_install()
+    _, atlas_files_exist = check_atlas_install(args.registration_config)
+
     if not atlas_files_exist:
         logging.warning("Atlas does not exist, downloading.")
-        if args.download_path is None:
-            args.download_path = os.path.join(temp_dir_path, "atlas.tar.gz")
-        atlas_download.main(args.atlas, args.install_path, args.download_path)
+        atlas_download(args.atlas, args.install_path, args.download_path)
         amend_cfg(
             new_atlas_folder=args.install_path, atlas=args.atlas,
         )
-    if args.registration_config is None:
-        args.registration_config = source_files.source_custom_config_amap()
 
     logging.debug("Making registration directory")
     ensure_directory_exists(args.registration_output_folder)

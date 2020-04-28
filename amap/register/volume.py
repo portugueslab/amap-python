@@ -110,7 +110,6 @@ def calculate_volumes(
     )
 
     structures_reference_df = load_structures_as_df(atlas_structures_path)
-
     voxel_volume = get_voxel_volume(registration_config)
     voxel_volume_in_mm = voxel_volume / (1000 ** 3)
     df = initialise_df(
@@ -119,7 +118,6 @@ def calculate_volumes(
         "right_volume_mm3",
         "total_volume_mm3",
     )
-
     for atlas_value in unique_vals_left:
         if atlas_value is not 0:  # outside brain
             try:
@@ -133,7 +131,6 @@ def calculate_volumes(
                     counts_right,
                     voxel_volume_in_mm,
                 )
-
             except UnknownAtlasValue:
                 print(
                     "Value: {} is not in the atlas structure reference file. "
