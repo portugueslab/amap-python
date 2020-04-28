@@ -115,7 +115,7 @@ class Atlas(object):
     # FIXME: should be just changing the header
     def _flip(self, nii_img, axis_idx):
         return nb.Nifti1Image(
-            np.flip(nii_img.get_data(), axis_idx),
+            np.flip(np.asanyarray(nii_img.dataobj), axis_idx),
             nii_img.affine,
             nii_img.header,
         )
@@ -132,7 +132,7 @@ class Atlas(object):
 
     def _transpose(self, nii_img, transposition):
         # FIXME: should be just changing the header
-        data = np.transpose(nii_img.get_data(), transposition)
+        data = np.transpose(np.asanyarray(nii_img.dataobj), transposition)
         data = np.swapaxes(data, 0, 1)
         return nb.Nifti1Image(data, nii_img.affine, nii_img.header)
 
@@ -156,7 +156,7 @@ class Atlas(object):
 
     def _rotate(self, nii_img, axes, k):
         # FIXME: should be just changing the header
-        data = np.rot90(nii_img.get_data(), axes=axes, k=k)
+        data = np.rot90(np.asanyarray(nii_img.dataobj), axes=axes, k=k)
         # data = np.swapaxes(data, 0, 1)
         return nb.Nifti1Image(data, nii_img.affine, nii_img.header)
 

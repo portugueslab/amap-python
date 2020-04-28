@@ -5,6 +5,7 @@ import pandas as pd
 from amap.register.volume import calculate_volumes
 from amap.config.atlas import Atlas
 from imlib.source.source_files import source_custom_config_amap
+from imlib.general.config import get_config_obj
 
 volume_data_path = os.path.join("tests", "data", "register", "volume")
 registered_atlas_path = os.path.join(volume_data_path, "registered_atlas.nii")
@@ -14,13 +15,12 @@ registered_hemispheres_path = os.path.join(
 volumes_validate_path = os.path.join(volume_data_path, "volumes.csv")
 
 
-def test_volume_calc(tmpdir):
+def test_volume_calc(tmpdir, test_config_path):
     tmpdir = str(tmpdir)
-
-    atlas = Atlas(source_custom_config_amap())
+    atlas = Atlas(test_config_path)
 
     structures_file_path = atlas.get_structures_path()
-    registration_config = source_custom_config_amap()
+    registration_config = test_config_path
 
     volumes_csv_path = os.path.join(tmpdir, "volumes.csv")
     calculate_volumes(
