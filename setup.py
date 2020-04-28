@@ -23,7 +23,7 @@ requirements = [
     "napari>=0.2.8",
     "scikit-image",
     "luddite",
-    "neuro>=0.0.9",
+    "neuro>=0.0.11",
 ]
 
 
