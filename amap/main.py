@@ -8,7 +8,7 @@ from neuro.atlas_tools.paths import Paths
 from amap.register.brain_processor import BrainProcessor
 from amap.register.brain_registration import BrainRegistration
 from amap.register.volume import calculate_volumes
-from amap.config.atlas import Atlas
+from amap.config.atlas import RegistrationAtlas
 from amap.vis.boundaries import main as calc_boundaries
 from amap.register.registration_params import RegistrationParams
 from amap.register.tools import save_downsampled_image
@@ -79,7 +79,8 @@ def main(
     n_processes = get_num_processes(min_free_cpu_cores=n_free_cpus)
     load_parallel = n_processes > 1
     paths = Paths(registration_output_folder)
-    atlas = Atlas(registration_config, dest_folder=registration_output_folder)
+    atlas = RegistrationAtlas(registration_config,
+                              dest_folder=Path(registration_output_folder))
     run = Run(paths, atlas, boundaries=boundaries, debug=debug)
 
     if run.preprocess:
@@ -207,11 +208,11 @@ def main(
         calculate_volumes(
             paths.registered_atlas_path,
             paths.hemispheres_atlas_path,
-            atlas.get_structures_path(),
+            atlas.get_element_path("structures_name"),
             registration_config,
             paths.volume_csv_path,
-            left_hemisphere_value=atlas.get_left_hemisphere_value(),
-            right_hemisphere_value=atlas.get_right_hemisphere_value(),
+            left_hemisphere_value=int(atlas["left_hemisphere_value"]),
+            right_hemisphere_value=int(atlas["right_hemisphere_value"]),
         )
 
     if run.boundaries:
