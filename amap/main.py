@@ -3,6 +3,10 @@ import numpy as np
 
 from pathlib import Path
 from imlib.general.system import get_num_processes, delete_temp
+import nibabel as nb
+from brainio import brainio
+
+
 
 from neuro.atlas_tools.paths import Paths
 from amap.register.brain_processor import BrainProcessor
@@ -13,11 +17,18 @@ from amap.vis.boundaries import main as calc_boundaries
 from amap.register.registration_params import RegistrationParams
 from amap.register.tools import save_downsampled_image
 from amap.utils.run import Run
+from amap.utils.transformations import flip_multiple
 
 flips = {
     "horizontal": (True, True, False),
     "coronal": (True, True, False),
     "sagittal": (False, True, False),
+}
+
+transpositions = {
+    "horizontal": (1, 0, 2),
+    "coronal": (2, 0, 1),
+    "sagittal": (2, 1, 0),
 }
 
 
@@ -89,7 +100,7 @@ def main(
         logging.info("Loading data")
 
         brain = BrainProcessor(
-            atlas,
+            atlas.pix_sizes,
             target_brain_path,
             registration_output_folder,
             x_pixel_um,
@@ -101,25 +112,31 @@ def main(
             n_free_cpus=n_free_cpus,
         )
 
-        # reorients the atlas to the orientation of the sample
-        brain.swap_atlas_orientation_to_self()
+        for element in ["atlas", "brain", "hemispheres"]:
+            key = f"{element}_name"
+            nii_img = atlas.get_nii_from_element(key)
+            data = np.asanyarray(nii_img.dataobj)
 
-        # reorients atlas to the nifti (origin is the most ventral, posterior,
-        # left voxel) coordinate framework
+            # reorients the atlas to the orientation of the sample
+            data = np.transpose(data, transpositions[brain.original_orientation])
+            data = np.swapaxes(data, 0, 1)
+            # reorients atlas to the nifti (origin is the most ventral, posterior,
+            # left voxel) coordinate framework
+            data = flip_multiple(data, flips[orientation])
 
-        flip = flips[orientation]
-        brain.flip_atlas(flip)
+            # flips if the input data doesnt match the nifti standard
+            data = flip_multiple(data, [flip_x, flip_y, flip_z])
 
-        # flips if the input data doesnt match the nifti standard
-        brain.flip_atlas((flip_x, flip_y, flip_z))
+            ####################
+            # axes = (0, 1)
+            # k = 3
+            # brain.rotate_atlas(axes, k)
+            ####################
+            new_img = nb.Nifti1Image(data,
+                                     nii_img.affine,
+                                     nii_img.header)
+            brainio.to_nii(new_img, atlas.get_dest_path(key))
 
-        ####################
-        # axes = (0, 1)
-        # k = 3
-        # brain.rotate_atlas(axes, k)
-        ####################
-
-        brain.atlas.save_all()
         if save_downsampled:
             brain.target_brain = brain.target_brain.astype(
                 np.uint16, copy=False

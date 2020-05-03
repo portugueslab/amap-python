@@ -13,6 +13,7 @@ from brainio import brainio
 from imlib.image.scale import scale_and_convert_to_16_bits
 
 from amap.tools import image
+from amap.utils.transformations import get_transf_matrix_from_res
 
 transpositions = {
     "horizontal": (1, 0, 2),
@@ -31,7 +32,7 @@ class BrainProcessor(object):
 
     def __init__(
         self,
-        atlas,
+        atlas_pixel_sizes,
         target_brain_path,
         output_folder,
         x_pix_um,
@@ -40,7 +41,6 @@ class BrainProcessor(object):
         original_orientation="coronal",
         load_parallel=False,
         sort_input_file=False,
-        load_atlas=True,
         n_free_cpus=2,
         scaling_rounding_decimals=5,
     ):
@@ -62,8 +62,7 @@ class BrainProcessor(object):
         """
         self.target_brain_path = target_brain_path
 
-        self.atlas = atlas
-        atlas_pixel_sizes = self.atlas.pix_sizes
+        self.atlas_pixel_sizes = atlas_pixel_sizes
 
         x_scaling = round(
             x_pix_um / atlas_pixel_sizes["x"], scaling_rounding_decimals
@@ -90,8 +89,6 @@ class BrainProcessor(object):
         self.swap_numpy_to_image_axis()
         self.output_folder = output_folder
 
-        if load_atlas:
-            self.atlas.load_all()
 
     def swap_numpy_to_image_axis(self):
         self.target_brain = np.swapaxes(self.target_brain, 0, 1)
@@ -107,22 +104,6 @@ class BrainProcessor(object):
             if flip_axis:
                 self.target_brain = np.flip(self.target_brain, axis_idx)
 
-    def flip_atlas(self, axes):
-        self.atlas.flip(axes)
-
-    def swap_atlas_orientation_to_self(self):
-        self.atlas.reorientate_to_sample(self.original_orientation)
-
-    def rotate_atlas(self, axes, k):
-        """
-        If the supplied data is not in a conventional rotation (i.e.
-        for a coronal dataset, the dorsal side facing up), rotate
-        the atlas to match
-        :param axes:
-        :param k:
-        :return:
-        """
-        self.atlas.rotate(axes, k)
 
     def filter(self):
         """
@@ -161,10 +142,9 @@ class BrainProcessor(object):
 
         :param str dest_path: Where to save the image on the filesystem
         """
-        atlas_pix_sizes = self.atlas.pix_sizes
-        transformation_matrix = (
-            self.atlas.make_atlas_scale_transformation_matrix()
-        )
+        atlas_pix_sizes = self.atlas_pixel_sizes
+        transformation_matrix = get_transf_matrix_from_res(
+            self.atlas_pixel_sizes)
         brainio.to_nii(
             self.target_brain,
             dest_path,

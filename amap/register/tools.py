@@ -37,7 +37,7 @@ def save_downsampled_image(
     logging.info(f"Downsampling image: {name}")
     logging.info("Loading data")
     brain = BrainProcessor(
-        atlas,
+        atlas.pix_sizes,
         image,
         output_folder,
         x_pixel_um,
@@ -46,7 +46,6 @@ def save_downsampled_image(
         original_orientation=orientation,
         load_parallel=load_parallel,
         sort_input_file=sort_input_file,
-        load_atlas=False,
         n_free_cpus=n_free_cpus,
     )
 
