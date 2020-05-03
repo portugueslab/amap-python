@@ -7,7 +7,6 @@ import nibabel as nb
 from brainio import brainio
 
 
-
 from neuro.atlas_tools.paths import Paths
 from amap.register.brain_processor import BrainProcessor
 from amap.register.brain_registration import BrainRegistration
@@ -118,7 +117,9 @@ def main(
             data = np.asanyarray(nii_img.dataobj)
 
             # reorients the atlas to the orientation of the sample
-            data = np.transpose(data, transpositions[brain.original_orientation])
+            data = np.transpose(
+                data, transpositions[brain.original_orientation]
+            )
             data = np.swapaxes(data, 0, 1)
             # reorients atlas to the nifti (origin is the most ventral, posterior,
             # left voxel) coordinate framework
@@ -132,9 +133,7 @@ def main(
             # k = 3
             # brain.rotate_atlas(axes, k)
             ####################
-            new_img = nb.Nifti1Image(data,
-                                     nii_img.affine,
-                                     nii_img.header)
+            new_img = nb.Nifti1Image(data, nii_img.affine, nii_img.header)
             brainio.to_nii(new_img, atlas.get_dest_path(key))
 
         if save_downsampled:

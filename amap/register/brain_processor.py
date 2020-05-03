@@ -89,7 +89,6 @@ class BrainProcessor(object):
         self.swap_numpy_to_image_axis()
         self.output_folder = output_folder
 
-
     def swap_numpy_to_image_axis(self):
         self.target_brain = np.swapaxes(self.target_brain, 0, 1)
 
@@ -103,7 +102,6 @@ class BrainProcessor(object):
         for axis_idx, flip_axis in enumerate(axes):
             if flip_axis:
                 self.target_brain = np.flip(self.target_brain, axis_idx)
-
 
     def filter(self):
         """
@@ -144,7 +142,8 @@ class BrainProcessor(object):
         """
         atlas_pix_sizes = self.atlas_pixel_sizes
         transformation_matrix = get_transf_matrix_from_res(
-            self.atlas_pixel_sizes)
+            self.atlas_pixel_sizes
+        )
         brainio.to_nii(
             self.target_brain,
             dest_path,
