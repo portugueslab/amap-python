@@ -9,7 +9,7 @@ requirements = [
     "nibabel",
     "numpy",
     "configparser",
-    "pandas",
+    "pandas<=0.25.3,>=0.25.1",
     "scikit-image",
     "tqdm",
     "natsort",
@@ -29,7 +29,7 @@ requirements = [
 
 setup(
     name="amap",
-    version="0.1.19",
+    version="0.1.20",
     description="Automated mouse atlas propagation",
     long_description=long_description,
     long_description_content_type="text/markdown",
